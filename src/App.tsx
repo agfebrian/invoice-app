@@ -1,10 +1,14 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom"
-import { IndexPage } from "~/pages/invoice"
+import { IndexPage, DetailPage } from "~/pages/invoice"
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <IndexPage />,
+  },
+  {
+    path: "/invoice",
+    element: <DetailPage />,
   },
 ])
 
