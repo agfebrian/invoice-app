@@ -1,0 +1,6 @@
+export * from "./icon-plus-circle"
+export * from "./icon-logo"
+export * from "./icon-bg-logo"
+export * from "./icon-dark"
+export * from "./icon-light"
+export * from "./icon-chevron-right"

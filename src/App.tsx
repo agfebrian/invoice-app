@@ -1,16 +1,15 @@
-import { useState } from "react"
+import { RouterProvider, createBrowserRouter } from "react-router-dom"
+import { IndexPage } from "~/pages/invoice"
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <IndexPage />,
+  },
+])
 
 function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <button
-      className="rounded-md bg-gray-950 p-3 font-bold text-white hover:shadow-xl"
-      onClick={() => setCount((count) => count + 1)}
-    >
-      count is {count}
-    </button>
-  )
+  return <RouterProvider router={router} />
 }
 
 export default App
