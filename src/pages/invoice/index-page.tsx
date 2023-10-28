@@ -3,6 +3,7 @@ import { Form } from "~/components/layouts/invoice"
 import { Button, Card, Tag, Drawer } from "~/components/app"
 import { IconPlusCircle, IconChevronRight } from "~/components/icons"
 import { useState } from "react"
+import { Link } from "react-router-dom"
 
 export const IndexPage = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -64,9 +65,12 @@ export const IndexPage = () => {
                       <Tag text="Draft" color="secondary" />
                     )}
                   </div>
-                  <a href="#">
+                  <Link
+                    to="/invoice"
+                    className="rounded-full p-2 hover:bg-primary-01/20"
+                  >
                     <IconChevronRight />
-                  </a>
+                  </Link>
                 </div>
               </Card>
             ))}
