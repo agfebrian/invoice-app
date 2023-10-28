@@ -1,10 +1,17 @@
 import { LayoutDashboard, LayoutContainer } from "~/components/layouts"
-import { Button, Card, Tag } from "~/components/app"
+import { Form } from "~/components/layouts/invoice"
+import { Button, Card, Tag, Drawer } from "~/components/app"
 import { IconPlusCircle, IconChevronRight } from "~/components/icons"
+import { useState } from "react"
 
 export const IndexPage = () => {
+  const [isOpen, setIsOpen] = useState(false)
+
   return (
     <LayoutDashboard>
+      <Drawer isOpen={isOpen} onClose={() => setIsOpen(false)}>
+        <Form />
+      </Drawer>
       <section className="pt-[77px]">
         <LayoutContainer className="flex flex-col gap-16">
           <div className="flex w-full items-center justify-between gap-4">
@@ -16,7 +23,7 @@ export const IndexPage = () => {
                 There are 7 total invoices
               </p>
             </div>
-            <Button icon>
+            <Button icon onClick={() => setIsOpen(true)}>
               <IconPlusCircle />
               <p className="mt-[3px]">New Invoice</p>
             </Button>

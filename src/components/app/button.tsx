@@ -5,6 +5,7 @@ interface Props {
   color?: "primary" | "secondary" | "error" | "dark"
   icon?: boolean
   iconPosition?: "left" | "right"
+  align?: "left" | "center" | "right"
   onClick?: () => void
   children: ReactNode
 }
@@ -15,6 +16,7 @@ const defaultProps: Props = {
   children: "Button",
   icon: false,
   iconPosition: "left",
+  align: "left",
 }
 
 export const Button: React.FC<Props> = ({
@@ -22,6 +24,7 @@ export const Button: React.FC<Props> = ({
   color,
   icon,
   iconPosition,
+  align,
   onClick,
   children,
 }) => {
@@ -51,10 +54,26 @@ export const Button: React.FC<Props> = ({
     return result
   }
 
+  const showAlign = () => {
+    let result: string = ""
+    switch (align) {
+      case "left":
+        result = "justify-start"
+        break
+      case "center":
+        result = "justify-center"
+        break
+      case "right":
+        result = "justify-end"
+        break
+    }
+    return result
+  }
+
   return (
     <button
       type={type}
-      className={`${colorize()} ${showIcon()} flex h-12 items-center rounded-3xl text-[15px] font-bold leading-[15px] tracking-[-0.25px] outline-none transition`}
+      className={`${colorize()} ${showIcon()} ${showAlign()} flex h-12 items-center rounded-3xl text-[15px] font-bold leading-[15px] tracking-[-0.25px] outline-none transition`}
       onClick={onClick}
     >
       {children}
