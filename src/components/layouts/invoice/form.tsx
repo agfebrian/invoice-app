@@ -10,11 +10,53 @@ import {
   Label,
   Button,
 } from "~/components/app"
-import { LayoutSectionForm, LayoutInput } from "../"
+import { LayoutSectionForm, LayoutInput, LayoutLabel } from "../"
 import { IconDelete } from "~/components/icons/icon-delete"
+
+import * as yup from "yup"
+import { useForm, useFieldArray } from "react-hook-form"
+import { yupResolver } from "@hookform/resolvers/yup"
+
+const invoiceForm = yup.object({
+  fromStreetAddress: yup.string().required("can't be empty"),
+  fromCity: yup.string(),
+  fromPostCode: yup.string(),
+  fromCountry: yup.string(),
+  itemsInvoice: yup.array(
+    yup.object({
+      name: yup.string().required("can't be empty"),
+      quantity: yup.number().required(),
+      price: yup.number().required(),
+    }),
+  ),
+})
+type InvoiceForm = yup.InferType<typeof invoiceForm>
 
 export const Form = () => {
   const { darkMode } = useContext(ThemeContext)
+  const {
+    control,
+    register,
+    formState: { errors },
+  } = useForm<InvoiceForm>({
+    mode: "all",
+    resolver: yupResolver(invoiceForm),
+    defaultValues: {
+      itemsInvoice: [
+        {
+          name: "",
+          quantity: 1,
+          price: 0,
+        },
+      ],
+    },
+  })
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "itemsInvoice",
+  })
+
+  const addItemInvoice = () => append({ name: "", quantity: 1, price: 0 })
 
   return (
     <>
@@ -24,8 +66,22 @@ export const Form = () => {
         </h3>
         <LayoutSectionForm title="Bill From">
           <LayoutInput>
-            <Label htmlFor="streetAddress" text="Street Address" />
-            <Input id="streetAddress" placeholder="Street Address" />
+            <LayoutLabel>
+              <Label
+                htmlFor="streetAddress"
+                text="Street Address"
+                error={errors.fromStreetAddress?.message}
+              />
+              <span className="text-[13px] font-medium leading-[15px] text-error-08">
+                {errors.fromStreetAddress?.message}
+              </span>
+            </LayoutLabel>
+            <Input
+              id="streetAddress"
+              placeholder="Street Address"
+              {...register("fromStreetAddress")}
+              error={errors.fromStreetAddress?.message}
+            />
           </LayoutInput>
           <div className="grid grid-cols-3 gap-6">
             <LayoutInput>
@@ -88,48 +144,65 @@ export const Form = () => {
           <span className="text-lg font-bold leading-8 tracking-[-0.375px] text-[#777F98]">
             Item List
           </span>
-          <div className="grid grid-cols-11 gap-4">
-            <div className="col-span-5">
-              <LayoutInput>
-                <Label htmlFor="itemName" text="Item Name" />
-                <Input />
-              </LayoutInput>
+          {fields.map((field, index) => (
+            <div key={field.id} className="grid grid-cols-11 gap-4">
+              <div className="col-span-5">
+                <LayoutInput>
+                  <LayoutLabel>
+                    <Label
+                      htmlFor="itemName"
+                      text="Item Name"
+                      error={errors.itemsInvoice?.[index]?.name?.message}
+                    />
+                    <span className="text-[13px] font-medium leading-[15px] text-error-08">
+                      {errors.itemsInvoice?.[index]?.name?.message}
+                    </span>
+                  </LayoutLabel>
+                  <Input
+                    {...register(`itemsInvoice.${index}.name`)}
+                    error={errors.itemsInvoice?.[index]?.name?.message}
+                  />
+                </LayoutInput>
+              </div>
+              <div>
+                <LayoutInput>
+                  <Label htmlFor="qty" text="QTY" />
+                  <Input {...register(`itemsInvoice.${index}.quantity`)} />
+                </LayoutInput>
+              </div>
+              <div className="col-span-2">
+                <LayoutInput>
+                  <Label htmlFor="price" text="Price" />
+                  <Input {...register(`itemsInvoice.${index}.price`)} />
+                </LayoutInput>
+              </div>
+              <div className="col-span-2">
+                <LayoutInput>
+                  <Label htmlFor="total" text="Total" />
+                  <Input />
+                </LayoutInput>
+              </div>
+              <div className="h-full">
+                <LayoutInput>
+                  <Label htmlFor="action" text="action" visible={false} />
+                  <div className="flex h-12 w-full items-center justify-center">
+                    <button
+                      className="p-1 outline-none"
+                      onClick={() => remove(index)}
+                    >
+                      <IconDelete />
+                    </button>
+                  </div>
+                </LayoutInput>
+              </div>
             </div>
-            <div>
-              <LayoutInput>
-                <Label htmlFor="qty" text="QTY" />
-                <Input />
-              </LayoutInput>
-            </div>
-            <div className="col-span-2">
-              <LayoutInput>
-                <Label htmlFor="price" text="Price" />
-                <Input />
-              </LayoutInput>
-            </div>
-            <div className="col-span-2">
-              <LayoutInput>
-                <Label htmlFor="total" text="Total" />
-                <Input />
-              </LayoutInput>
-            </div>
-            <div className="h-full">
-              <LayoutInput>
-                <Label htmlFor="action" text="action" visible={false} />
-                <div className="flex h-12 w-full items-center justify-center">
-                  <button className="p-1 outline-none">
-                    <IconDelete />
-                  </button>
-                </div>
-              </LayoutInput>
-            </div>
-          </div>
+          ))}
           {darkMode ? (
-            <Button color="dark" align="center">
+            <Button color="dark" align="center" onClick={addItemInvoice}>
               + Add New Item
             </Button>
           ) : (
-            <Button color="secondary" align="center">
+            <Button color="secondary" align="center" onClick={addItemInvoice}>
               + Add New Item
             </Button>
           )}
