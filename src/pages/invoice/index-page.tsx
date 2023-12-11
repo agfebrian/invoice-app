@@ -7,9 +7,9 @@ import { Link, useLoaderData } from "react-router-dom"
 import { getInvoices } from "~/api/invoce/invoice"
 import { format } from "date-fns"
 import { formatCurrency } from "~/utils"
+import { LayoutEmptyState } from "~/components/layouts/layout-empty-state"
 
 import type { Invoice } from "~/api/invoce/invoice.type"
-import { LayoutEmptyState } from "~/components/layouts/layout-empty-state"
 
 export const indexLoader = async () => {
   const res = await getInvoices()

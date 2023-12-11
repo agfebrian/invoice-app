@@ -1,7 +1,12 @@
+import { useRef } from "react"
 import { Outlet } from "react-router-dom"
 import { Logo, ToggleTheme } from "~/components/app"
+import { useScrollToTop } from "~/hooks/use-scroll-to-top"
 
 export const RootLayout = () => {
+  const main = useRef(null)
+  useScrollToTop(main.current!)
+
   return (
     <div className="flex h-screen w-full">
       <div className="w-[103px]">
@@ -17,7 +22,10 @@ export const RootLayout = () => {
           </div>
         </div>
       </div>
-      <div className="absolute inset-0 min-h-screen w-full flex-1 overflow-y-auto bg-light-11 dark:bg-dark-12">
+      <div
+        ref={main}
+        className="absolute inset-0 min-h-screen w-full flex-1 overflow-y-auto bg-light-11 dark:bg-dark-12"
+      >
         <Outlet />
       </div>
     </div>
