@@ -13,7 +13,7 @@ module.exports = {
   rules: {
     "prettier/prettier": "error",
     "react-refresh/only-export-components": [
-      "warn",
+      "off",
       { allowConstantExport: true },
     ],
   },

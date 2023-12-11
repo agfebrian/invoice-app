@@ -1,17 +1,32 @@
-import { RouterProvider, createBrowserRouter } from "react-router-dom"
+import {
+  Route,
+  RouterProvider,
+  createBrowserRouter,
+  createRoutesFromElements,
+} from "react-router-dom"
 import { ThemeProvider } from "./context"
-import { IndexPage, DetailPage } from "~/pages/invoice"
+// pages
+import {
+  IndexPage,
+  indexLoader,
+  DetailPage,
+  detailLoader,
+} from "~/pages/invoice"
+// layouts
+import { RootLayout, ErrorPageLayout } from "./layouts"
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <IndexPage />,
-  },
-  {
-    path: "/invoice",
-    element: <DetailPage />,
-  },
-])
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <Route path="/" element={<RootLayout />} errorElement={<ErrorPageLayout />}>
+      <Route index element={<IndexPage />} loader={indexLoader} />
+      <Route
+        path="/invoice/:id"
+        element={<DetailPage />}
+        loader={detailLoader}
+      />
+    </Route>,
+  ),
+)
 
 function App() {
   return (
