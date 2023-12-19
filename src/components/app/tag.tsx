@@ -1,4 +1,4 @@
-import { IconLight } from "../icons"
+import { IconDot } from "../icons"
 
 interface Props {
   text: string
@@ -47,7 +47,7 @@ export const Tag: React.FC<Props> = ({ text, color }) => {
     <div
       className={`${colorize()} flex w-[104px] justify-center gap-2 rounded-md pb-3 pt-4`}
     >
-      <IconLight color={colorTag()} />
+      <IconDot color={colorTag()} />
       <p className="text-[15px] font-bold leading-[15px] tracking-[-0.25px]">
         {text}
       </p>
