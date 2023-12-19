@@ -1,11 +1,17 @@
-import { useContext } from "react"
-import { Link, LoaderFunctionArgs, useLoaderData } from "react-router-dom"
+import { useContext, useState } from "react"
+import {
+  Link,
+  LoaderFunctionArgs,
+  useLoaderData,
+  useParams,
+  useNavigate,
+} from "react-router-dom"
 import { DrawerContext } from "~/context"
 import { LayoutContainer } from "~/components/layouts"
 import { IconChevronRight } from "~/components/icons"
 import { Card, Button, Drawer } from "~/components/app"
 import { Field, Status, Form } from "~/components/layouts/invoice"
-import { getInvoice } from "~/api/invoce/invoice"
+import { getInvoice, updateInvoice } from "~/api/invoce/invoice"
 import { format } from "date-fns"
 import { formatCurrency } from "~/utils"
 
@@ -24,6 +30,8 @@ export const detailLoader = async ({ params }: LoaderFunctionArgs<Params>) => {
 }
 
 export const DetailPage = () => {
+  const params = useParams()
+  const navigate = useNavigate()
   const { open } = useContext(DrawerContext)
   const invoice = useLoaderData() as Invoice
 
@@ -75,6 +83,30 @@ export const DetailPage = () => {
     />
   )
 
+  const [loadingUpdateStatus, setLoadingUpdateStatus] = useState<boolean>(false)
+  const updateStatusToPaid = async () => {
+    setLoadingUpdateStatus(true)
+    await new Promise((r) => setTimeout(r, 1000))
+    await updateInvoice(params.id as string, {
+      id: params.id as string,
+      senderAddress: invoice.senderAddress,
+      clientAddress: invoice.clientAddress,
+      clientName: invoice.clientName,
+      clientEmail: invoice.clientEmail,
+      paymentDue: invoice.createdAt,
+      createdAt: invoice.createdAt,
+      paymentTerms: invoice.paymentTerms,
+      description: invoice.description,
+      status: "paid",
+      items: invoice.items,
+      total: invoice.total,
+    })
+    setLoadingUpdateStatus(false)
+    navigate(`/invoice/${params.id}`, {
+      replace: true,
+    })
+  }
+
   return (
     <>
       <Drawer>{form}</Drawer>
@@ -98,7 +130,11 @@ export const DetailPage = () => {
                 Edit
               </Button>
               <Button color="error">Delete</Button>
-              <Button color="primary" disabled={invoice.status === "paid"}>
+              <Button
+                color="primary"
+                disabled={invoice.status === "paid" || loadingUpdateStatus}
+                onClick={updateStatusToPaid}
+              >
                 Mark as Paid
               </Button>
             </div>
