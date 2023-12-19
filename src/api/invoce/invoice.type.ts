@@ -6,10 +6,11 @@ export type Address = {
 }
 
 export type InvoiceItem = {
+  id?: string
   name: string
   quantity: number
-  price: number
-  total: number
+  price: number | string
+  total?: number | undefined
 }
 
 export type Invoice = {

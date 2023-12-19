@@ -3,3 +3,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.custom__scrollbar::-webkit-scrollbar {
+  @apply invisible h-4 w-2;
+}
+
+.custom__scrollbar::-webkit-scrollbar-thumb {
+  @apply rounded-lg bg-light-05 dark:bg-dark-04;
+}
