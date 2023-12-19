@@ -2,7 +2,7 @@ import { LayoutContainer } from "~/components/layouts"
 import { Form, Status } from "~/components/layouts/invoice"
 import { Button, Card, Drawer } from "~/components/app"
 import { IconPlusCircle, IconChevronRight } from "~/components/icons"
-import { useState } from "react"
+import { useContext } from "react"
 import { Link, useLoaderData } from "react-router-dom"
 import { getInvoices } from "~/api/invoce/invoice"
 import { format } from "date-fns"
@@ -10,6 +10,7 @@ import { formatCurrency } from "~/utils"
 import { LayoutEmptyState } from "~/components/layouts/layout-empty-state"
 
 import type { Invoice } from "~/api/invoce/invoice.type"
+import { DrawerContext } from "~/context"
 
 export const indexLoader = async () => {
   const res = await getInvoices()
@@ -20,8 +21,8 @@ export const indexLoader = async () => {
 }
 
 export const IndexPage = () => {
+  const { open } = useContext(DrawerContext)
   const invoices = useLoaderData() as Invoice[]
-  const [isOpen, setIsOpen] = useState<boolean>(false)
 
   const invoiceList = invoices.map((item) => (
     <Card
@@ -62,7 +63,7 @@ export const IndexPage = () => {
 
   return (
     <>
-      <Drawer isOpen={isOpen} onClose={() => setIsOpen(false)}>
+      <Drawer>
         <Form />
       </Drawer>
       <section className="pt-[77px]">
@@ -76,7 +77,7 @@ export const IndexPage = () => {
                 There are {invoices.length} total invoices
               </p>
             </div>
-            <Button icon onClick={() => setIsOpen(true)}>
+            <Button icon onClick={open}>
               <IconPlusCircle />
               <p className="mt-[3px]">New Invoice</p>
             </Button>

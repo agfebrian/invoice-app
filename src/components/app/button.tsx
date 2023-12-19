@@ -6,6 +6,7 @@ interface Props {
   icon?: boolean
   iconPosition?: "left" | "right"
   align?: "left" | "center" | "right"
+  disabled?: boolean
   onClick?: () => void
   children: ReactNode
 }
@@ -17,6 +18,7 @@ const defaultProps: Props = {
   icon: false,
   iconPosition: "left",
   align: "left",
+  disabled: false,
 }
 
 export const Button: React.FC<Props> = ({
@@ -25,6 +27,7 @@ export const Button: React.FC<Props> = ({
   icon,
   iconPosition,
   align,
+  disabled,
   onClick,
   children,
 }) => {
@@ -73,7 +76,10 @@ export const Button: React.FC<Props> = ({
   return (
     <button
       type={type}
-      className={`${colorize()} ${showIcon()} ${showAlign()} flex h-12 items-center rounded-3xl text-[15px] font-bold leading-[15px] tracking-[-0.25px] outline-none transition`}
+      disabled={disabled}
+      className={`${colorize()} ${showIcon()} ${showAlign()} ${
+        disabled ? "opacity-30" : ""
+      } flex h-12 items-center rounded-3xl text-[15px] font-bold leading-[15px] tracking-[-0.25px] outline-none transition`}
       onClick={onClick}
     >
       {children}

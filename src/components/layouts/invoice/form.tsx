@@ -1,5 +1,5 @@
 import { useContext } from "react"
-import { ThemeContext } from "~/context"
+import { DrawerContext, ThemeContext } from "~/context"
 import {
   Input,
   Select,
@@ -19,10 +19,10 @@ import { useForm, useFieldArray, Controller } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import { formatCurrency, randomNumber, randomString } from "~/utils"
 import { NumericFormat } from "react-number-format"
-import { postInvoice } from "~/api/invoce/invoice"
+import { postInvoice, updateInvoice } from "~/api/invoce/invoice"
 import { Invoice, Address } from "~/api/invoce/invoice.type"
 import { addDays, format } from "date-fns"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 
 const invoiceForm = yup.object({
   fromStreetAddress: yup.string().required("can't be empty"),
@@ -81,8 +81,15 @@ const defaultValue: InvoiceForm = {
   ],
 }
 
-export const Form = () => {
+interface Props {
+  isUpdate?: boolean
+  data?: InvoiceForm
+}
+
+export const Form: React.FC<Props> = ({ isUpdate, data }) => {
+  const params = useParams()
   const navigate = useNavigate()
+  const { close } = useContext(DrawerContext)
   const { darkMode } = useContext(ThemeContext)
   const {
     control,
@@ -96,7 +103,7 @@ export const Form = () => {
   } = useForm<InvoiceForm>({
     mode: "all",
     resolver: yupResolver(invoiceForm),
-    defaultValues: defaultValue,
+    defaultValues: isUpdate ? data : defaultValue,
   })
   const { fields, append, remove } = useFieldArray({
     control,
@@ -119,7 +126,9 @@ export const Form = () => {
 
   const onSubmit = async () => {
     const invoice = getValues()
-    const id = `${randomString(2)}${randomNumber(4)}`.toUpperCase()
+    const id = isUpdate
+      ? (params.id as string)
+      : `${randomString(2)}${randomNumber(4)}`.toUpperCase()
     const paymentTerms = invoice.paymentTerms.split(" ")[1]
     const paymentDue = format(
       addDays(invoice.invoiceDate, Number(paymentTerms)),
@@ -140,7 +149,10 @@ export const Form = () => {
     }
 
     invoice.items!.map((item, index) => {
-      setValue(`items.${index}.price`, item.price.replaceAll(",", ""))
+      setValue(
+        `items.${index}.price`,
+        item.price.toString().replaceAll(",", ""),
+      )
       setValue(`items.${index}.total`, totalItemInvoice(index))
     })
     const mapTotalPricingInvoice = invoice.items!.map((item) => item.total)
@@ -164,12 +176,19 @@ export const Form = () => {
     }
 
     try {
-      const res = await postInvoice(payload)
+      const res = isUpdate
+        ? await updateInvoice(params.id as string, payload)
+        : await postInvoice(payload)
       if (res.status) {
-        reset(defaultValue)
-        setValue("invoiceDate", defaultValue.invoiceDate)
-        setValue("paymentTerms", defaultValue.paymentTerms)
-        navigate("/", { replace: true })
+        if (isUpdate) {
+          navigate(`/invoice/${params.id}`, { replace: true })
+        } else {
+          reset(defaultValue)
+          setValue("invoiceDate", defaultValue.invoiceDate)
+          setValue("paymentTerms", defaultValue.paymentTerms)
+          navigate("/", { replace: true })
+        }
+        close()
       }
     } catch (error) {
       throw new Error("Something went wrong")
@@ -182,9 +201,16 @@ export const Form = () => {
       className="relative h-screen pb-8 pl-[159px] pr-[56px] pt-[59px]"
     >
       <div className="custom__scrollbar flex max-h-[85%] flex-1 flex-col gap-[46px] overflow-y-scroll pl-1 pr-6">
-        <h3 className="text-2xl font-bold tracking-[-0.5px] text-dark-08 dark:text-white">
-          New Invoice
-        </h3>
+        {isUpdate ? (
+          <h3 className="text-2xl font-bold tracking-[-0.5px] text-dark-08 dark:text-white">
+            Edit <span className="text-primary-06">#</span>
+            {params.id}
+          </h3>
+        ) : (
+          <h3 className="text-2xl font-bold tracking-[-0.5px] text-dark-08 dark:text-white">
+            New Invoice
+          </h3>
+        )}
         <LayoutSectionForm title="Bill From">
           <LayoutInput>
             <LayoutLabel
@@ -489,12 +515,28 @@ export const Form = () => {
         </LayoutSectionForm>
       </div>
       <div className="fixed bottom-0 left-0 z-10 flex w-full rounded-r-[20px] bg-white py-[31px] pb-8 pl-[159px] pr-[56px] shadow-2xl dark:bg-dark-12">
-        <Button color="secondary">Discard</Button>
-        <div className="ml-auto flex items-center gap-2">
-          <Button color="dark">Save as Draft</Button>
-          <Button type="submit">Save & Send</Button>
-        </div>
+        {isUpdate ? (
+          <>
+            <div className="ml-auto flex items-center gap-2">
+              <Button color={darkMode ? "dark" : "secondary"}>Cancel</Button>
+              <Button type="submit">Save Changes</Button>
+            </div>
+          </>
+        ) : (
+          <>
+            <Button color="secondary">Discard</Button>
+            <div className="ml-auto flex items-center gap-2">
+              <Button color="dark">Save as Draft</Button>
+              <Button type="submit">Save & Send</Button>
+            </div>
+          </>
+        )}
       </div>
     </form>
   )
+}
+
+Form.defaultProps = {
+  isUpdate: false,
+  data: {} as InvoiceForm,
 }

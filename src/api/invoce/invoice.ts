@@ -17,3 +17,9 @@ export const postInvoice = async (body: Invoice) => {
   const res = await http.post<Invoice>(`/invoices/`, body)
   return res
 }
+
+export const updateInvoice = async (id: string, body: Invoice) => {
+  body.items.forEach((item) => (item.price = Number(item.price)))
+  const res = await http.put<Invoice>(`/invoices/${id}`, body)
+  return res
+}

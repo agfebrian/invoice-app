@@ -4,7 +4,7 @@ import {
   createBrowserRouter,
   createRoutesFromElements,
 } from "react-router-dom"
-import { ThemeProvider } from "./context"
+import { ThemeProvider, DrawerProvider } from "./context"
 // pages
 import {
   IndexPage,
@@ -31,7 +31,9 @@ const router = createBrowserRouter(
 function App() {
   return (
     <ThemeProvider>
-      <RouterProvider router={router} />
+      <DrawerProvider>
+        <RouterProvider router={router} />
+      </DrawerProvider>
     </ThemeProvider>
   )
 }
