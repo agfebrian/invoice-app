@@ -1,12 +1,13 @@
-import { ReactNode } from "react"
+import { ReactNode, useContext } from "react"
+import { DrawerContext } from "~/context"
 
 interface Props {
-  isOpen: boolean
   children: ReactNode
-  onClose?: () => void
 }
 
-export const Drawer: React.FC<Props> = ({ isOpen, children, onClose }) => {
+export const Drawer: React.FC<Props> = ({ children }) => {
+  const { isOpen, close } = useContext(DrawerContext)
+
   return (
     <div
       className={`${
@@ -14,7 +15,7 @@ export const Drawer: React.FC<Props> = ({ isOpen, children, onClose }) => {
       } fixed inset-0 z-[5] h-full w-full`}
     >
       <div
-        onClick={onClose}
+        onClick={close}
         className="absolute inset-0 h-full w-full bg-black opacity-40 transition-colors"
       ></div>
       <div
