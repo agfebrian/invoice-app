@@ -110,21 +110,7 @@ export const Form: React.FC<Props> = ({ isUpdate, data }) => {
     name: "items",
   })
 
-  const addItemInvoice = () =>
-    append({ name: "", quantity: 1, price: "0", total: 0 })
-
-  const totalItemInvoice = (index: number) => {
-    const qty = watch(`items.${index}.quantity`)
-    let price = watch(`items.${index}.price`).toString()
-
-    if (price) {
-      price = price.replaceAll(",", "")
-    }
-
-    return qty * Number(price)
-  }
-
-  const onSubmit = async () => {
+  const getValueForm = () => {
     const invoice = getValues()
     const id = isUpdate
       ? (params.id as string)
@@ -175,6 +161,41 @@ export const Form: React.FC<Props> = ({ isUpdate, data }) => {
       total: sumTotalPricingInvoice,
     }
 
+    return payload
+  }
+
+  const addItemInvoice = () =>
+    append({ name: "", quantity: 1, price: "0", total: 0 })
+
+  const totalItemInvoice = (index: number) => {
+    const qty = watch(`items.${index}.quantity`)
+    let price = watch(`items.${index}.price`).toString()
+
+    if (price) {
+      price = price.replaceAll(",", "")
+    }
+
+    return qty * Number(price)
+  }
+
+  const saveAsDraft = async () => {
+    const payload = { ...getValueForm(), ...{ status: "draft" } }
+    try {
+      const res = await postInvoice(payload)
+      if (res.status) {
+        reset(defaultValue)
+        setValue("invoiceDate", defaultValue.invoiceDate)
+        setValue("paymentTerms", defaultValue.paymentTerms)
+        navigate("/", { replace: true })
+        close()
+      }
+    } catch (error) {
+      throw new Error("Something went wrong")
+    }
+  }
+
+  const onSubmit = async () => {
+    const payload = getValueForm()
     try {
       const res = isUpdate
         ? await updateInvoice(params.id as string, payload)
@@ -518,15 +539,21 @@ export const Form: React.FC<Props> = ({ isUpdate, data }) => {
         {isUpdate ? (
           <>
             <div className="ml-auto flex items-center gap-2">
-              <Button color={darkMode ? "dark" : "secondary"}>Cancel</Button>
+              <Button color={darkMode ? "dark" : "secondary"} onClick={close}>
+                Cancel
+              </Button>
               <Button type="submit">Save Changes</Button>
             </div>
           </>
         ) : (
           <>
-            <Button color="secondary">Discard</Button>
+            <Button color="secondary" onClick={close}>
+              Discard
+            </Button>
             <div className="ml-auto flex items-center gap-2">
-              <Button color="dark">Save as Draft</Button>
+              <Button color="dark" onClick={saveAsDraft}>
+                Save as Draft
+              </Button>
               <Button type="submit">Save & Send</Button>
             </div>
           </>
