@@ -23,3 +23,8 @@ export const updateInvoice = async (id: string, body: Invoice) => {
   const res = await http.put<Invoice>(`/invoices/${id}`, body)
   return res
 }
+
+export const deleteInvoice = async (id: string) => {
+  const res = await http.delete<Invoice>(`/invoices/${id}`)
+  return res
+}

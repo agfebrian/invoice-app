@@ -9,9 +9,9 @@ import {
 import { DrawerContext } from "~/context"
 import { LayoutContainer } from "~/components/layouts"
 import { IconChevronRight } from "~/components/icons"
-import { Card, Button, Drawer } from "~/components/app"
+import { Card, Button, Drawer, Modal } from "~/components/app"
 import { Field, Status, Form } from "~/components/layouts/invoice"
-import { getInvoice, updateInvoice } from "~/api/invoce/invoice"
+import { getInvoice, updateInvoice, deleteInvoice } from "~/api/invoce/invoice"
 import { format } from "date-fns"
 import { formatCurrency } from "~/utils"
 
@@ -34,6 +34,9 @@ export const DetailPage = () => {
   const navigate = useNavigate()
   const { open } = useContext(DrawerContext)
   const invoice = useLoaderData() as Invoice
+
+  const [modalConfirm, setModalConfirm] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   const itemsOrder = invoice.items.map((item, index) => (
     <div key={index} className="grid grid-cols-5">
@@ -107,9 +110,24 @@ export const DetailPage = () => {
     })
   }
 
+  const removeInvoice = async () => {
+    setIsLoading(true)
+    await new Promise((r) => setTimeout(r, 1000))
+    await deleteInvoice(params.id as string)
+    navigate("/", { replace: true })
+    setIsLoading(false)
+  }
+
   return (
     <>
       <Drawer>{form}</Drawer>
+      <Modal
+        isOpen={modalConfirm}
+        isLoading={isLoading}
+        description={`Are you sure you want to delete invoice #${params.id}? This action cannot be undone.`}
+        onClose={() => setModalConfirm(false)}
+        onApply={removeInvoice}
+      />
       <LayoutContainer className="mb-[77px] flex flex-col gap-6 pt-[77px]">
         <Link to="/" className="flex items-center gap-6">
           <IconChevronRight className="rotate-180" />
@@ -129,7 +147,9 @@ export const DetailPage = () => {
               <Button color="dark" onClick={open}>
                 Edit
               </Button>
-              <Button color="error">Delete</Button>
+              <Button color="error" onClick={() => setModalConfirm(true)}>
+                Delete
+              </Button>
               <Button
                 color="primary"
                 disabled={invoice.status === "paid" || loadingUpdateStatus}
