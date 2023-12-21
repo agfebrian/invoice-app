@@ -70,6 +70,62 @@ export const IndexPage = () => {
     })
   }, [searchParams])
 
+  const dropdownFilter = (
+    <Dropdown>
+      <DropdownItem>
+        <Checkbox
+          id="draft"
+          name="status"
+          value="draft"
+          checked={selectedFilterStatus["draft"]}
+          onChange={() =>
+            onCheckSelectedFilter("draft", !selectedFilterStatus["draft"])
+          }
+        />
+        <label
+          htmlFor="draft"
+          className="text-[15px] font-bold leading-[15px] tracking-[-0.25px] text-dark-08 hover:cursor-pointer dark:text-white"
+        >
+          Draft
+        </label>
+      </DropdownItem>
+      <DropdownItem>
+        <Checkbox
+          id="pending"
+          name="status"
+          value="pending"
+          checked={selectedFilterStatus["pending"]}
+          onChange={() =>
+            onCheckSelectedFilter("pending", !selectedFilterStatus["pending"])
+          }
+        />
+        <label
+          htmlFor="pending"
+          className="text-[15px] font-bold leading-[15px] tracking-[-0.25px] text-dark-08 hover:cursor-pointer dark:text-white"
+        >
+          Pending
+        </label>
+      </DropdownItem>
+      <DropdownItem>
+        <Checkbox
+          id="paid"
+          name="status"
+          value="paid"
+          checked={selectedFilterStatus["paid"]}
+          onChange={() =>
+            onCheckSelectedFilter("paid", !selectedFilterStatus["paid"])
+          }
+        />
+        <label
+          htmlFor="paid"
+          className="text-[15px] font-bold leading-[15px] tracking-[-0.25px] text-dark-08 hover:cursor-pointer dark:text-white"
+        >
+          Paid
+        </label>
+      </DropdownItem>
+    </Dropdown>
+  )
+
   const invoiceList = invoices.map((item) => (
     <Link to={`/invoice/${item.id}`}>
       <Card
@@ -121,68 +177,7 @@ export const IndexPage = () => {
               </p>
             </div>
             <div className="ml-auto flex items-center gap-10">
-              <Dropdown>
-                <DropdownItem>
-                  <Checkbox
-                    id="draft"
-                    name="status"
-                    value="draft"
-                    checked={selectedFilterStatus["draft"]}
-                    onChange={() =>
-                      onCheckSelectedFilter(
-                        "draft",
-                        !selectedFilterStatus["draft"],
-                      )
-                    }
-                  />
-                  <label
-                    htmlFor="draft"
-                    className="text-[15px] font-bold leading-[15px] tracking-[-0.25px] text-dark-08 hover:cursor-pointer dark:text-white"
-                  >
-                    Draft
-                  </label>
-                </DropdownItem>
-                <DropdownItem>
-                  <Checkbox
-                    id="pending"
-                    name="status"
-                    value="pending"
-                    checked={selectedFilterStatus["pending"]}
-                    onChange={() =>
-                      onCheckSelectedFilter(
-                        "pending",
-                        !selectedFilterStatus["pending"],
-                      )
-                    }
-                  />
-                  <label
-                    htmlFor="pending"
-                    className="text-[15px] font-bold leading-[15px] tracking-[-0.25px] text-dark-08 hover:cursor-pointer dark:text-white"
-                  >
-                    Pending
-                  </label>
-                </DropdownItem>
-                <DropdownItem>
-                  <Checkbox
-                    id="paid"
-                    name="status"
-                    value="paid"
-                    checked={selectedFilterStatus["paid"]}
-                    onChange={() =>
-                      onCheckSelectedFilter(
-                        "paid",
-                        !selectedFilterStatus["paid"],
-                      )
-                    }
-                  />
-                  <label
-                    htmlFor="paid"
-                    className="text-[15px] font-bold leading-[15px] tracking-[-0.25px] text-dark-08 hover:cursor-pointer dark:text-white"
-                  >
-                    Paid
-                  </label>
-                </DropdownItem>
-              </Dropdown>
+              {dropdownFilter}
               <Button icon onClick={open}>
                 <IconPlusCircle />
                 <p className="mt-[3px]">New Invoice</p>
