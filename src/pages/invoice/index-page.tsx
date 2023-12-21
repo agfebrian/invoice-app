@@ -1,9 +1,22 @@
 import { LayoutContainer } from "~/components/layouts"
 import { Form, Status } from "~/components/layouts/invoice"
-import { Button, Card, Drawer } from "~/components/app"
+import {
+  Button,
+  Card,
+  Drawer,
+  Dropdown,
+  DropdownItem,
+  Checkbox,
+} from "~/components/app"
 import { IconPlusCircle, IconChevronRight } from "~/components/icons"
-import { useContext } from "react"
-import { Link, useLoaderData } from "react-router-dom"
+import { useContext, useEffect, useState } from "react"
+import {
+  Link,
+  useLoaderData,
+  createSearchParams,
+  useSearchParams,
+  LoaderFunctionArgs,
+} from "react-router-dom"
 import { getInvoices } from "~/api/invoce/invoice"
 import { format } from "date-fns"
 import { formatCurrency } from "~/utils"
@@ -12,8 +25,14 @@ import { LayoutEmptyState } from "~/components/layouts/layout-empty-state"
 import type { Invoice } from "~/api/invoce/invoice.type"
 import { DrawerContext } from "~/context"
 
-export const indexLoader = async () => {
-  const res = await getInvoices()
+export const indexLoader = async ({ request }: LoaderFunctionArgs) => {
+  const url = new URL(request.url)
+
+  const res = await getInvoices({
+    draft: Boolean(Number(url.searchParams.get("draft"))),
+    pending: Boolean(Number(url.searchParams.get("pending"))),
+    paid: Boolean(Number(url.searchParams.get("paid"))),
+  })
   if (!res.status) {
     throw new Response("Not Found")
   }
@@ -23,6 +42,33 @@ export const indexLoader = async () => {
 export const IndexPage = () => {
   const { open } = useContext(DrawerContext)
   const invoices = useLoaderData() as Invoice[]
+
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [selectedFilterStatus, setSelectedFilterStatus] = useState<{
+    draft: boolean
+    pending: boolean
+    paid: boolean
+  }>({ draft: false, pending: false, paid: false })
+  const onCheckSelectedFilter = (key: string, value: boolean) => {
+    const objUpdated = { ...selectedFilterStatus, [key]: value }
+    setSelectedFilterStatus(objUpdated)
+
+    setSearchParams(
+      createSearchParams([
+        ["draft", `${objUpdated["draft"] ? 1 : 0}`],
+        ["pending", `${objUpdated["pending"] ? 1 : 0}`],
+        ["paid", `${objUpdated["paid"] ? 1 : 0}`],
+      ]),
+    )
+  }
+
+  useEffect(() => {
+    setSelectedFilterStatus({
+      draft: Boolean(Number(searchParams.get("draft"))),
+      pending: Boolean(Number(searchParams.get("pending"))),
+      paid: Boolean(Number(searchParams.get("paid"))),
+    })
+  }, [searchParams])
 
   const invoiceList = invoices.map((item) => (
     <Card
@@ -77,10 +123,74 @@ export const IndexPage = () => {
                 There are {invoices.length} total invoices
               </p>
             </div>
-            <Button icon onClick={open}>
-              <IconPlusCircle />
-              <p className="mt-[3px]">New Invoice</p>
-            </Button>
+            <div className="ml-auto flex items-center gap-10">
+              <Dropdown>
+                <DropdownItem>
+                  <Checkbox
+                    id="draft"
+                    name="status"
+                    value="draft"
+                    checked={selectedFilterStatus["draft"]}
+                    onChange={() =>
+                      onCheckSelectedFilter(
+                        "draft",
+                        !selectedFilterStatus["draft"],
+                      )
+                    }
+                  />
+                  <label
+                    htmlFor="draft"
+                    className="text-[15px] font-bold leading-[15px] tracking-[-0.25px] text-dark-08 hover:cursor-pointer dark:text-white"
+                  >
+                    Draft
+                  </label>
+                </DropdownItem>
+                <DropdownItem>
+                  <Checkbox
+                    id="pending"
+                    name="status"
+                    value="pending"
+                    checked={selectedFilterStatus["pending"]}
+                    onChange={() =>
+                      onCheckSelectedFilter(
+                        "pending",
+                        !selectedFilterStatus["pending"],
+                      )
+                    }
+                  />
+                  <label
+                    htmlFor="pending"
+                    className="text-[15px] font-bold leading-[15px] tracking-[-0.25px] text-dark-08 hover:cursor-pointer dark:text-white"
+                  >
+                    Pending
+                  </label>
+                </DropdownItem>
+                <DropdownItem>
+                  <Checkbox
+                    id="paid"
+                    name="status"
+                    value="paid"
+                    checked={selectedFilterStatus["paid"]}
+                    onChange={() =>
+                      onCheckSelectedFilter(
+                        "paid",
+                        !selectedFilterStatus["paid"],
+                      )
+                    }
+                  />
+                  <label
+                    htmlFor="paid"
+                    className="text-[15px] font-bold leading-[15px] tracking-[-0.25px] text-dark-08 hover:cursor-pointer dark:text-white"
+                  >
+                    Paid
+                  </label>
+                </DropdownItem>
+              </Dropdown>
+              <Button icon onClick={open}>
+                <IconPlusCircle />
+                <p className="mt-[3px]">New Invoice</p>
+              </Button>
+            </div>
           </div>
           <div className="flex flex-col gap-4 pb-16">
             {invoices.length ? invoiceList : <LayoutEmptyState />}

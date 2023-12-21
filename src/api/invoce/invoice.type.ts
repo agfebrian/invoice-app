@@ -27,3 +27,9 @@ export type Invoice = {
   items: InvoiceItem[]
   total: number
 }
+
+export type Query = {
+  draft: boolean
+  pending: boolean
+  paid: boolean
+}
