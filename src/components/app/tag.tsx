@@ -1,3 +1,5 @@
+import { useContext } from "react"
+import { ThemeContext } from "~/context"
 import { IconDot } from "../icons"
 
 interface Props {
@@ -11,6 +13,8 @@ const defaultProps: Props = {
 }
 
 export const Tag: React.FC<Props> = ({ text, color }) => {
+  const { darkMode } = useContext(ThemeContext)
+
   const colorize = () => {
     let result = ""
     switch (color) {
@@ -21,7 +25,7 @@ export const Tag: React.FC<Props> = ({ text, color }) => {
         result = "bg-warning-01/[0.0571] text-warning-01"
         break
       case "secondary":
-        result = "bg-dark-09/[0.0571] text-dark-09"
+        result = "bg-dark-09/[0.0571] text-dark-09 dark:text-light-05"
         break
     }
     return result
@@ -37,7 +41,7 @@ export const Tag: React.FC<Props> = ({ text, color }) => {
         result = "#FF8F00"
         break
       case "secondary":
-        result = "#373B53"
+        result = darkMode ? "#DFE3FA" : "#373B53"
         break
     }
     return result
