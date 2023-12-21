@@ -176,7 +176,7 @@ export const IndexPage = () => {
                 There are {invoices.length} total invoices
               </p>
             </div>
-            <div className="ml-auto flex items-center gap-10">
+            <div className="ml-auto flex items-center">
               {dropdownFilter}
               <Button icon onClick={open}>
                 <IconPlusCircle />

@@ -37,9 +37,9 @@ export const Dropdown: React.FC<DropdownProps> = ({ children }) => {
   }, [])
 
   return (
-    <div ref={dropdownRef} className="relative">
+    <div ref={dropdownRef} className="relative w-[170px]">
       <button
-        className="relative z-[4] flex items-center justify-center gap-[14px] p-3 text-[15px] font-bold leading-[15px] tracking-[-0.25px] text-dark-08 outline-none dark:text-white"
+        className="relative z-[4] mx-auto flex items-center justify-center gap-[14px] p-3 text-[15px] font-bold leading-[15px] tracking-[-0.25px] text-dark-08 outline-none dark:text-white"
         onClick={toggle}
       >
         Filter by status
