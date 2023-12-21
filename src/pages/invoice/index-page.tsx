@@ -71,40 +71,37 @@ export const IndexPage = () => {
   }, [searchParams])
 
   const invoiceList = invoices.map((item) => (
-    <Card
-      key={item.id}
-      className="flex items-center justify-between py-4 pl-8 pr-6"
-    >
-      <div className="flex items-center">
-        <p className="text-[15px] font-bold leading-[15px] tracking-[-0.25px]">
-          <span className="text-primary-07">#</span>
-          <span className="text-dark-08 dark:text-white">{item.id}</span>
-        </p>
-        <p className="ml-11 mr-[59px] text-[13px] font-medium leading-[15px] tracking-[-0.1px]">
-          <span className="mr-1 text-primary-06 dark:text-light-05">Due</span>
-          <span className="text-primary-07 dark:text-light-05">
-            {format(new Date(item.paymentDue), "dd MMM yyyy")}
-          </span>
-        </p>
-        <p className="text-[13px] font-medium leading-[15px] tracking-[-0.1px] text-primary-07 dark:text-white">
-          {item.clientName}
-        </p>
-      </div>
-      <div className="flex items-center">
-        <p className="text-center text-[15px] font-bold leading-6 tracking-[-0.25px] text-dark-08 dark:text-white">
-          {formatCurrency(item.total)}
-        </p>
-        <div className="ml-10 mr-5">
-          <Status status={item.status} />
+    <Link to={`/invoice/${item.id}`}>
+      <Card
+        key={item.id}
+        className="flex items-center justify-between border border-light-04 py-4 pl-8 pr-6 hover:border-primary-01 dark:border-dark-03 dark:hover:border-primary-01"
+      >
+        <div className="flex items-center">
+          <p className="text-[15px] font-bold leading-[15px] tracking-[-0.25px]">
+            <span className="text-primary-07">#</span>
+            <span className="text-dark-08 dark:text-white">{item.id}</span>
+          </p>
+          <p className="ml-11 mr-[59px] text-[13px] font-medium leading-[15px] tracking-[-0.1px]">
+            <span className="mr-1 text-primary-06 dark:text-light-05">Due</span>
+            <span className="text-primary-07 dark:text-light-05">
+              {format(new Date(item.paymentDue), "dd MMM yyyy")}
+            </span>
+          </p>
+          <p className="text-[13px] font-medium leading-[15px] tracking-[-0.1px] text-primary-07 dark:text-white">
+            {item.clientName}
+          </p>
         </div>
-        <Link
-          to={`/invoice/${item.id}`}
-          className="rounded-full p-2 hover:bg-primary-01/20"
-        >
+        <div className="flex items-center">
+          <p className="text-center text-[15px] font-bold leading-6 tracking-[-0.25px] text-dark-08 dark:text-white">
+            {formatCurrency(item.total)}
+          </p>
+          <div className="ml-10 mr-5">
+            <Status status={item.status} />
+          </div>
           <IconChevronRight />
-        </Link>
-      </div>
-    </Card>
+        </div>
+      </Card>
+    </Link>
   ))
 
   return (
