@@ -17,7 +17,7 @@ export const Drawer: React.FC<Props> = ({ children }) => {
     >
       <Overlay onClick={close} />
       <div
-        className={`relative flex h-full w-1/2 flex-col rounded-r-[20px] bg-white transition-all duration-300 ease-in-out dark:bg-dark-12 ${
+        className={`relative flex h-full w-full flex-col rounded-r-[20px] bg-white transition-all duration-300 ease-in-out dark:bg-dark-12 sm:w-[80%] lg:w-[80%] xl:w-1/2 ${
           isOpen
             ? "translate-x-0 opacity-100"
             : "-translate-x-[200px] opacity-0"

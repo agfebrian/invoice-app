@@ -1,5 +1,6 @@
 import { useState, ReactNode, useEffect, useRef } from "react"
 import { IconChevronRight } from "../icons"
+import { useWideScreen } from "~/hooks"
 
 interface DropdownItemProps {
   children: ReactNode
@@ -14,13 +15,20 @@ export const DropdownItem: React.FC<DropdownItemProps> = ({ children }) => {
 }
 
 interface DropdownProps {
+  width?: string
   children: ReactNode
 }
 
-export const Dropdown: React.FC<DropdownProps> = ({ children }) => {
+const DefaultDropdownProps = {
+  width: "170px",
+}
+
+export const Dropdown: React.FC<DropdownProps> = ({ width, children }) => {
   const [isOpen, setIsOpen] = useState(false)
 
   const toggle = () => setIsOpen((prev) => !prev)
+
+  const { smallScreen } = useWideScreen()
 
   const dropdownRef = useRef<HTMLDivElement | null>(null)
   useEffect(() => {
@@ -37,12 +45,12 @@ export const Dropdown: React.FC<DropdownProps> = ({ children }) => {
   }, [])
 
   return (
-    <div ref={dropdownRef} className="relative w-[170px]">
+    <div ref={dropdownRef} className="relative" style={{ width: width }}>
       <button
         className="relative z-[4] mx-auto flex items-center justify-center gap-[14px] p-3 text-[15px] font-bold leading-[15px] tracking-[-0.25px] text-dark-08 outline-none dark:text-white"
         onClick={toggle}
       >
-        Filter by status
+        {smallScreen() ? "Filter" : "Filter by status"}
         <IconChevronRight
           className={`${
             isOpen ? "-rotate-90" : "rotate-90"
@@ -61,3 +69,5 @@ export const Dropdown: React.FC<DropdownProps> = ({ children }) => {
     </div>
   )
 }
+
+Dropdown.defaultProps = DefaultDropdownProps

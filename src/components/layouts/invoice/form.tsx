@@ -219,9 +219,9 @@ export const Form: React.FC<Props> = ({ isUpdate, data }) => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="relative h-screen pb-8 pl-[159px] pr-[56px] pt-[59px]"
+      className="relative h-screen pb-14 pt-[139px] xl:pl-[159px] xl:pr-[56px] xl:pt-[59px]"
     >
-      <div className="custom__scrollbar flex max-h-[85%] flex-1 flex-col gap-[46px] overflow-y-scroll pl-1 pr-6">
+      <div className="custom__scrollbar flex max-h-[85%] flex-1 flex-col gap-[46px] overflow-y-scroll pl-6 pr-6 xl:pl-1">
         {isUpdate ? (
           <h3 className="text-2xl font-bold tracking-[-0.5px] text-dark-08 dark:text-white">
             Edit <span className="text-primary-06">#</span>
@@ -535,7 +535,7 @@ export const Form: React.FC<Props> = ({ isUpdate, data }) => {
           </Button>
         </LayoutSectionForm>
       </div>
-      <div className="fixed bottom-0 left-0 z-10 flex w-full rounded-r-[20px] bg-white py-[31px] pb-8 pl-[159px] pr-[56px] shadow-2xl dark:bg-dark-12">
+      <div className="fixed bottom-0 left-0 z-10 flex w-full rounded-r-[20px] bg-white px-6 py-[31px] shadow-2xl dark:bg-dark-12 xl:pl-[159px] xl:pr-[56px]">
         {isUpdate ? (
           <>
             <div className="ml-auto flex items-center gap-2">

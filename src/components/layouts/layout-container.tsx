@@ -7,7 +7,11 @@ interface Props {
 
 export const LayoutContainer: React.FC<Props> = ({ className, children }) => {
   return (
-    <div className={`mx-auto w-full max-w-[730px] ${className ?? ""}`}>
+    <div
+      className={`mx-auto w-full max-w-[730px] px-6 lg:px-12 xl:px-0 ${
+        className ?? ""
+      }`}
+    >
       {children}
     </div>
   )

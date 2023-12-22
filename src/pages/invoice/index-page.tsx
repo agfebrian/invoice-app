@@ -24,6 +24,7 @@ import { LayoutEmptyState } from "~/components/layouts/layout-empty-state"
 
 import type { Invoice } from "~/api/invoce/invoice.type"
 import { DrawerContext } from "~/context"
+import { useWideScreen } from "~/hooks"
 
 export const indexLoader = async ({ request }: LoaderFunctionArgs) => {
   const url = new URL(request.url)
@@ -70,8 +71,10 @@ export const IndexPage = () => {
     })
   }, [searchParams])
 
+  const { smallScreen } = useWideScreen()
+
   const dropdownFilter = (
-    <Dropdown>
+    <Dropdown width={smallScreen() ? "130px" : "170px"}>
       <DropdownItem>
         <Checkbox
           id="draft"
@@ -130,31 +133,39 @@ export const IndexPage = () => {
     <Link to={`/invoice/${item.id}`}>
       <Card
         key={item.id}
-        className="flex items-center justify-between border border-light-04 py-4 pl-8 pr-6 hover:border-primary-01 dark:border-dark-03 dark:hover:border-primary-01"
+        className="flex items-center justify-between border border-light-04 p-6 hover:border-primary-01 dark:border-dark-03 dark:hover:border-primary-01 sm:py-4 sm:pl-8 sm:pr-6"
       >
-        <div className="flex items-center">
+        <div className="flex flex-col items-start sm:flex-row sm:items-center">
           <p className="text-[15px] font-bold leading-[15px] tracking-[-0.25px]">
             <span className="text-primary-07">#</span>
             <span className="text-dark-08 dark:text-white">{item.id}</span>
           </p>
-          <p className="ml-11 mr-[59px] text-[13px] font-medium leading-[15px] tracking-[-0.1px]">
+          <p className="mb-2 ml-0 mr-[59px] mt-6 text-[13px] font-medium leading-[15px] tracking-[-0.1px] sm:my-0 sm:ml-11">
             <span className="mr-1 text-primary-06 dark:text-light-05">Due</span>
             <span className="text-primary-07 dark:text-light-05">
               {format(new Date(item.paymentDue), "dd MMM yyyy")}
             </span>
           </p>
-          <p className="text-[13px] font-medium leading-[15px] tracking-[-0.1px] text-primary-07 dark:text-white">
+          <p className="hidden text-[13px] font-medium leading-[15px] tracking-[-0.1px] text-primary-07 dark:text-white sm:block">
             {item.clientName}
           </p>
-        </div>
-        <div className="flex items-center">
-          <p className="text-center text-[15px] font-bold leading-6 tracking-[-0.25px] text-dark-08 dark:text-white">
+          <p className="block text-center text-[15px] font-bold leading-6 tracking-[-0.25px] text-dark-08 dark:text-white sm:hidden">
             {formatCurrency(item.total)}
           </p>
-          <div className="ml-10 mr-5">
+        </div>
+        <div className="flex flex-col items-end sm:flex-row sm:items-center">
+          <p className="hidden text-center text-[15px] font-bold leading-6 tracking-[-0.25px] text-dark-08 dark:text-white sm:block">
+            {formatCurrency(item.total)}
+          </p>
+          <p className="block text-[13px] font-medium leading-[15px] tracking-[-0.1px] text-primary-07 dark:text-white sm:hidden">
+            {item.clientName}
+          </p>
+          <div className="mx-0 mt-6 sm:ml-10 sm:mr-5 sm:mt-0">
             <Status status={item.status} />
           </div>
-          <IconChevronRight />
+          <div className="hidden sm:block">
+            <IconChevronRight />
+          </div>
         </div>
       </Card>
     </Link>
@@ -169,18 +180,24 @@ export const IndexPage = () => {
         <LayoutContainer className="flex flex-col gap-16">
           <div className="flex w-full items-center justify-between gap-4">
             <div className="flex flex-col">
-              <h1 className="text-3xl font-bold leading-normal tracking-[-1.125px] text-dark-08 dark:text-white">
+              <h1 className="text-2xl font-bold leading-normal tracking-[-1.125px] text-dark-08 dark:text-white sm:text-3xl">
                 Invoices
               </h1>
               <p className="text-[13px] leading-[15px] tracking-[-0.1px] text-primary-06 dark:text-light-05">
-                There are {invoices.length} total invoices
+                {smallScreen() ? (
+                  <span>{invoices.length} invoices</span>
+                ) : (
+                  <span>There are {invoices.length} total invoices</span>
+                )}
               </p>
             </div>
             <div className="ml-auto flex items-center">
               {dropdownFilter}
               <Button icon onClick={open}>
                 <IconPlusCircle />
-                <p className="mt-[3px]">New Invoice</p>
+                <p className="mt-[3px]">
+                  {smallScreen() ? "New" : "New Invoice"}
+                </p>
               </Button>
             </div>
           </div>

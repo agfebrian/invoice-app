@@ -16,6 +16,7 @@ import { format } from "date-fns"
 import { formatCurrency } from "~/utils"
 
 import type { Invoice } from "~/api/invoce/invoice.type"
+import { useWideScreen } from "~/hooks"
 
 type Params = {
   id: string
@@ -38,29 +39,46 @@ export const DetailPage = () => {
   const [modalConfirm, setModalConfirm] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
+  const { smallScreen } = useWideScreen()
+
   const itemsOrder = invoice.items.map((item, index) => (
-    <div key={index} className="grid grid-cols-5">
-      <div>
-        <span className="text-[15px] font-bold leading-[15px] tracking-[-0.25px] text-dark-08 dark:text-white">
-          {item.name}
-        </span>
+    <>
+      <div key={index} className="hidden grid-cols-5 sm:grid">
+        <div>
+          <span className="text-[15px] font-bold leading-[15px] tracking-[-0.25px] text-dark-08 dark:text-white">
+            {item.name}
+          </span>
+        </div>
+        <div className="col-span-2 flex items-center justify-end">
+          <span className="text-[15px] font-bold leading-[15px] tracking-[-0.25px] text-primary-07 dark:text-light-05">
+            {item.quantity}
+          </span>
+        </div>
+        <div className="flex items-center justify-end">
+          <span className="text-[15px] font-bold leading-[15px] tracking-[-0.25px] text-primary-07 dark:text-light-05">
+            {formatCurrency(item.price as number)}
+          </span>
+        </div>
+        <div className="flex items-center justify-end">
+          <span className="text-[15px] font-bold leading-[15px] tracking-[-0.25px] text-dark-08 dark:text-white">
+            {formatCurrency(item.total as number)}
+          </span>
+        </div>
       </div>
-      <div className="col-span-2 flex items-center justify-end">
-        <span className="text-[15px] font-bold leading-[15px] tracking-[-0.25px] text-primary-07 dark:text-light-05">
-          {item.quantity}
-        </span>
-      </div>
-      <div className="flex items-center justify-end">
-        <span className="text-[15px] font-bold leading-[15px] tracking-[-0.25px] text-primary-07 dark:text-light-05">
-          {formatCurrency(item.price as number)}
-        </span>
-      </div>
-      <div className="flex items-center justify-end">
+      <div key={index} className="flex items-center justify-between">
+        <div className="flex flex-col gap-2">
+          <span className="text-[15px] font-bold leading-[15px] tracking-[-0.25px] text-dark-08 dark:text-white">
+            {item.name}
+          </span>
+          <span className="text-[15px] font-bold leading-[15px] tracking-[-0.25px] text-primary-07 dark:text-primary-06">
+            {item.quantity} x {formatCurrency(item.price as number)}
+          </span>
+        </div>
         <span className="text-[15px] font-bold leading-[15px] tracking-[-0.25px] text-dark-08 dark:text-white">
           {formatCurrency(item.total as number)}
         </span>
       </div>
-    </div>
+    </>
   ))
 
   const form = (
@@ -125,10 +143,11 @@ export const DetailPage = () => {
         isOpen={modalConfirm}
         isLoading={isLoading}
         description={`Are you sure you want to delete invoice #${params.id}? This action cannot be undone.`}
+        width={smallScreen() ? "90%" : "490px"}
         onClose={() => setModalConfirm(false)}
         onApply={removeInvoice}
       />
-      <LayoutContainer className="mb-[77px] flex flex-col gap-6 pt-[77px]">
+      <LayoutContainer className="mb-[140px] flex flex-col gap-6 pt-[77px] sm:mb-[77px]">
         <Link to="/" className="flex items-center gap-6">
           <IconChevronRight className="rotate-180" />
           <span className="text-[15px] font-bold leading-[15px] tracking-[-0.25px] text-dark-08 dark:text-white">
@@ -137,13 +156,13 @@ export const DetailPage = () => {
         </Link>
         <section>
           <Card className="flex justify-between">
-            <div className="flex items-center gap-5">
+            <div className="flex w-full items-center justify-between gap-5 sm:w-fit sm:justify-start">
               <p className="text-[13px] font-medium leading-[15px] tracking-[-0.1px] text-[#858BB2] dark:text-light-05">
                 Status
               </p>
               <Status status={invoice.status} />
             </div>
-            <div className="flex items-center gap-2">
+            <div className="hidden items-center gap-2 sm:flex">
               <Button color="dark" onClick={open}>
                 Edit
               </Button>
@@ -187,7 +206,7 @@ export const DetailPage = () => {
                 </span>
               </div>
             </div>
-            <div className="grid grid-cols-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3">
               <div className="flex flex-col gap-[31px]">
                 <Field
                   label="Invoice Date"
@@ -221,7 +240,7 @@ export const DetailPage = () => {
             </div>
             <div className="mt-[21px] overflow-hidden rounded-lg">
               <div className="flex flex-col gap-8 bg-light-04 px-8 pb-[39px] pt-[32px] dark:bg-dark-04">
-                <div className="grid grid-cols-5">
+                <div className="hidden grid-cols-5 sm:grid">
                   <div>
                     <span className="text-[13px] font-medium leading-[18px] tracking-[-0.1px] text-primary-07 dark:text-light-05">
                       Item Name
@@ -257,6 +276,21 @@ export const DetailPage = () => {
           </Card>
         </section>
       </LayoutContainer>
+      <div className="fixed bottom-0 left-0 flex w-full items-center justify-end gap-2 bg-white px-6 py-5 dark:bg-dark-03 sm:hidden">
+        <Button color="dark" onClick={open}>
+          Edit
+        </Button>
+        <Button color="error" onClick={() => setModalConfirm(true)}>
+          Delete
+        </Button>
+        <Button
+          color="primary"
+          disabled={invoice.status === "paid" || loadingUpdateStatus}
+          onClick={updateStatusToPaid}
+        >
+          Mark as Paid
+        </Button>
+      </div>
     </>
   )
 }

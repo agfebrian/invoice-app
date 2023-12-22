@@ -6,15 +6,21 @@ interface Props {
   isOpen: boolean
   title?: string
   description?: string
+  width?: string
   isLoading?: boolean
   onClose?: () => void
   onApply: () => void
+}
+
+const DefaultProps = {
+  width: "490px",
 }
 
 export const Modal: React.FC<Props> = ({
   isOpen,
   title,
   description,
+  width,
   isLoading,
   onClose,
   onApply,
@@ -31,11 +37,12 @@ export const Modal: React.FC<Props> = ({
       <Overlay />
       <div
         className={`
-        ${isOpen ? "opacity-100" : "opacity-0"}
-        ${isOpen ? "scale-100" : "scale-90"}
-        relative flex
-        h-[250px] w-[480px] flex-col rounded-lg bg-white px-12 pb-12 pt-[51px] transition-all dark:bg-dark-12
-      `}
+          ${isOpen ? "opacity-100" : "opacity-0"}
+          ${isOpen ? "scale-100" : "scale-90"}
+          relative flex
+          h-fit flex-col rounded-lg bg-white px-8 py-9 transition-all dark:bg-dark-12 sm:h-[250px] sm:px-12 sm:pb-12 sm:pt-[51px]
+        `}
+        style={{ width: width }}
       >
         <h3 className="text-2xl font-bold leading-8 tracking-[-0.5px] text-dark-08 dark:text-white">
           {title ? title : "Confirm Deletion"}
@@ -57,3 +64,5 @@ export const Modal: React.FC<Props> = ({
     </div>
   )
 }
+
+Modal.defaultProps = DefaultProps
