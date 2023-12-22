@@ -65,7 +65,7 @@ export const DetailPage = () => {
           </span>
         </div>
       </div>
-      <div key={index} className="flex items-center justify-between">
+      <div key={index} className="flex items-center justify-between sm:hidden">
         <div className="flex flex-col gap-2">
           <span className="text-[15px] font-bold leading-[15px] tracking-[-0.25px] text-dark-08 dark:text-white">
             {item.name}
