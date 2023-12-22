@@ -130,11 +130,8 @@ export const IndexPage = () => {
   )
 
   const invoiceList = invoices.map((item) => (
-    <Link to={`/invoice/${item.id}`}>
-      <Card
-        key={item.id}
-        className="flex items-center justify-between border border-light-04 p-6 hover:border-primary-01 dark:border-dark-03 dark:hover:border-primary-01 sm:py-4 sm:pl-8 sm:pr-6"
-      >
+    <Link key={item.id} to={`/invoice/${item.id}`}>
+      <Card className="flex items-center justify-between border border-light-04 p-6 hover:border-primary-01 dark:border-dark-03 dark:hover:border-primary-01 sm:py-4 sm:pl-8 sm:pr-6">
         <div className="flex flex-col items-start sm:flex-row sm:items-center">
           <p className="text-[15px] font-bold leading-[15px] tracking-[-0.25px]">
             <span className="text-primary-07">#</span>
