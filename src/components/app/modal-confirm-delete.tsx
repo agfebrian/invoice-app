@@ -37,15 +37,14 @@ export const Modal: React.FC<Props> = ({
       <Overlay />
       <div
         className={`
-          ${isOpen ? "opacity-100" : "opacity-0"}
-          ${isOpen ? "scale-100" : "scale-90"}
+          ${isOpen ? "scale-100 opacity-100" : "scale-90 opacity-0"}
           relative flex
           h-fit flex-col rounded-lg bg-white px-8 py-9 transition-all dark:bg-dark-12 sm:h-[250px] sm:px-12 sm:pb-12 sm:pt-[51px]
         `}
         style={{ width: width }}
       >
         <h3 className="text-2xl font-bold leading-8 tracking-[-0.5px] text-dark-08 dark:text-white">
-          {title ? title : "Confirm Deletion"}
+          {title || "Confirm Deletion"}
         </h3>
         <p className="mb-[14px] mt-3 text-[13px] font-medium leading-[22px] tracking-[-0.1px] text-primary-06 dark:text-light-05">
           {description

@@ -59,8 +59,11 @@ export const Dropdown: React.FC<DropdownProps> = ({ width, children }) => {
       </button>
       <div
         className={`
-          ${isOpen ? "visible opacity-100" : "invisible opacity-0"}
-          ${isOpen ? "scale-100" : "scale-95"}
+          ${
+            isOpen
+              ? "visible scale-100 opacity-100"
+              : "invisible scale-95 opacity-0"
+          }
           absolute w-full rounded-lg bg-white p-6 shadow-[0px_10px_20px_0px_rgba(72,84,159,0.25)] transition-all dark:bg-dark-04 dark:shadow-[0px_10px_20px_0px_rgba(0,0,0,0.25)]
         `}
       >

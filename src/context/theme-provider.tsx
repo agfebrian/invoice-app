@@ -15,29 +15,20 @@ export const ThemeProvider: React.FC<Props> = ({ children }) => {
   const [darkMode, setDarkMode] = useState<boolean>(false)
 
   const handleToggleDarkMode = () => {
-    if (darkMode) {
-      localStorage.setItem("theme", "light")
-      document.documentElement.classList.remove("dark")
-      setDarkMode(false)
-    } else {
-      localStorage.setItem("theme", "dark")
-      document.documentElement.classList.add("dark")
-      setDarkMode(true)
-    }
+    const theme = darkMode ? "light" : "dark"
+    localStorage.setItem("theme", theme)
+    document.documentElement.classList.toggle("dark", !darkMode)
+    setDarkMode(!darkMode)
   }
 
   useEffect(() => {
-    if (
+    const theme =
       localStorage.theme === "dark" ||
       (!("theme" in localStorage) &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches)
-    ) {
-      setDarkMode(true)
-      document.documentElement.classList.add("dark")
-    } else {
-      setDarkMode(false)
-      document.documentElement.classList.remove("dark")
-    }
+        window.matchMedia("(prefers-colors-scheme: dark)").matches)
+
+    setDarkMode(theme)
+    document.documentElement.classList.toggle("dark", theme)
   }, [])
 
   const provideContext = {
