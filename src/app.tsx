@@ -14,6 +14,9 @@ import {
 } from "~/pages/invoice"
 // layouts
 import { RootLayout, ErrorPageLayout } from "./layouts"
+// components
+import { ToastContainer } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -32,6 +35,7 @@ function App() {
   return (
     <ThemeProvider>
       <DrawerProvider>
+        <ToastContainer />
         <RouterProvider router={router} />
       </DrawerProvider>
     </ThemeProvider>

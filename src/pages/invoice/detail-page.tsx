@@ -16,7 +16,7 @@ import { format } from "date-fns"
 import { formatCurrency } from "~/utils"
 
 import type { Invoice } from "~/api/invoce/invoice.type"
-import { useWideScreen } from "~/hooks"
+import { useWideScreen, useToast } from "~/hooks"
 
 type Params = {
   id: string
@@ -40,10 +40,11 @@ export const DetailPage = () => {
   const [isLoading, setIsLoading] = useState(false)
 
   const { smallScreen } = useWideScreen()
+  const { toastSuccess, toastError } = useToast()
 
   const itemsOrder = invoice.items.map((item, index) => (
-    <>
-      <div key={index} className="hidden grid-cols-5 sm:grid">
+    <li key={index} className="flex w-full">
+      <div className="hidden w-full grid-cols-5 sm:grid">
         <div>
           <span className="text-[15px] font-bold leading-[15px] tracking-[-0.25px] text-dark-08 dark:text-white">
             {item.name}
@@ -65,7 +66,7 @@ export const DetailPage = () => {
           </span>
         </div>
       </div>
-      <div key={index} className="flex items-center justify-between sm:hidden">
+      <div className="flex w-full items-center justify-between sm:hidden">
         <div className="flex flex-col gap-2">
           <span className="text-[15px] font-bold leading-[15px] tracking-[-0.25px] text-dark-08 dark:text-white">
             {item.name}
@@ -78,7 +79,7 @@ export const DetailPage = () => {
           {formatCurrency(item.total as number)}
         </span>
       </div>
-    </>
+    </li>
   ))
 
   const form = (
@@ -108,31 +109,49 @@ export const DetailPage = () => {
   const updateStatusToPaid = async () => {
     setLoadingUpdateStatus(true)
     await new Promise((r) => setTimeout(r, 1000))
-    await updateInvoice(params.id as string, {
-      id: params.id as string,
-      senderAddress: invoice.senderAddress,
-      clientAddress: invoice.clientAddress,
-      clientName: invoice.clientName,
-      clientEmail: invoice.clientEmail,
-      paymentDue: invoice.createdAt,
-      createdAt: invoice.createdAt,
-      paymentTerms: invoice.paymentTerms,
-      description: invoice.description,
-      status: "paid",
-      items: invoice.items,
-      total: invoice.total,
-    })
+    try {
+      await updateInvoice(params.id as string, {
+        id: params.id as string,
+        senderAddress: invoice.senderAddress,
+        clientAddress: invoice.clientAddress,
+        clientName: invoice.clientName,
+        clientEmail: invoice.clientEmail,
+        paymentDue: invoice.createdAt,
+        createdAt: invoice.createdAt,
+        paymentTerms: invoice.paymentTerms,
+        description: invoice.description,
+        status: "paid",
+        items: invoice.items,
+        total: invoice.total,
+      })
+      toastSuccess("Successfuly update invoice to paid!")
+      navigate(`/invoice/${params.id}`, {
+        replace: true,
+      })
+    } catch (error) {
+      if (error instanceof Error) {
+        toastError(error.message)
+      } else {
+        toastError("Ops.. something wen wrong!")
+      }
+    }
     setLoadingUpdateStatus(false)
-    navigate(`/invoice/${params.id}`, {
-      replace: true,
-    })
   }
 
   const removeInvoice = async () => {
     setIsLoading(true)
     await new Promise((r) => setTimeout(r, 1000))
-    await deleteInvoice(params.id as string)
-    navigate("/", { replace: true })
+    try {
+      await deleteInvoice(params.id as string)
+      navigate("/", { replace: true })
+      toastSuccess("Successfuly remove invoice!")
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toastError(error.message)
+      } else {
+        toastError("Ops.. something wen wrong!")
+      }
+    }
     setIsLoading(false)
   }
 

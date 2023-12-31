@@ -13,6 +13,7 @@ import {
 } from "~/components/app"
 import { LayoutSectionForm, LayoutInput, LayoutLabel } from "../"
 import { IconDelete } from "~/components/icons/icon-delete"
+import { useToast } from "~/hooks"
 
 import * as yup from "yup"
 import { useForm, useFieldArray, Controller } from "react-hook-form"
@@ -89,6 +90,7 @@ interface Props {
 export const Form: React.FC<Props> = ({ isUpdate, data }) => {
   const params = useParams()
   const navigate = useNavigate()
+  const { toastSuccess, toastError } = useToast()
   const { close } = useContext(DrawerContext)
   const { darkMode } = useContext(ThemeContext)
   const {
@@ -188,9 +190,13 @@ export const Form: React.FC<Props> = ({ isUpdate, data }) => {
         setValue("paymentTerms", defaultValue.paymentTerms)
         navigate("/", { replace: true })
         close()
+        toastSuccess("Successfuly create new draft invoice!")
       }
     } catch (error) {
-      throw new Error("Something went wrong")
+      if (error instanceof Error) {
+        toastError(error.message)
+      }
+      toastError("Ops.. something went wrong!")
     }
   }
 
@@ -203,16 +209,21 @@ export const Form: React.FC<Props> = ({ isUpdate, data }) => {
       if (res.status) {
         if (isUpdate) {
           navigate(`/invoice/${params.id}`, { replace: true })
+          toastSuccess("Successfuly update invoice!")
         } else {
           reset(defaultValue)
           setValue("invoiceDate", defaultValue.invoiceDate)
           setValue("paymentTerms", defaultValue.paymentTerms)
           navigate("/", { replace: true })
+          toastSuccess("Successfuly create new invoice!")
         }
         close()
       }
     } catch (error) {
-      throw new Error("Something went wrong")
+      if (error instanceof Error) {
+        toastError(error.message)
+      }
+      toastError("Ops.. something went wrong!")
     }
   }
 
